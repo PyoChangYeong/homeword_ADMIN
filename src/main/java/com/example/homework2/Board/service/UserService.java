@@ -42,13 +42,7 @@ public class UserService {
     }
 
 //    입력한 username, password, admin으로 user 객체 만들어 repository 저장
-    UserRoleEnum role = UserRoleEnum.USER;
-    if (userRequestDto.isAdmin()) {
-        if (!userRequestDto.getAdminToken().equals(ADMIN_TOKEN)) {
-            throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가합니다.");
-        }
-        role = UserRoleEnum.ADMIN;
-    }
+    UserRoleEnum role = userRequestDto.getAdmin() ? UserRoleEnum.ADMIN : UserRoleEnum.USER;
     userRepository.save(User.User_Service(username, password, role));
 
     return ResponseEntity.ok(MegResponseDto.User_ServiceCode(HttpStatus.OK,"회원가입 성공"));
@@ -62,10 +56,8 @@ public class UserService {
 
 //              사용자 확인 및 비밀번호 확인
     Optional<User> user = userRepository.findByUsername(username);
-    if(user.isEmpty()){
-        if(!passwordEncoder.matches(password, user.get().getPassword())){
-            throw new ApiException(ErrorCode.NOT_MATCHING_INFO);
-        }
+    if (user.isEmpty() || !passwordEncoder.matches(password, user.get().getPassword())) {
+        throw new ApiException(ErrorCode.NOT_MATCHING_INFO);
     }
 
 
@@ -79,7 +71,5 @@ public class UserService {
             .body(MegResponseDto.User_ServiceCode(HttpStatus.OK,"로그인 성공"));
 
 }
-
-
 
 }

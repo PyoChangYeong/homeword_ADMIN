@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -25,6 +27,8 @@ public class Board extends Timestamp {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+
+
     @Builder
     public Board(BoardRequestDto boardRequestDto, User user) {
         this.title = boardRequestDto.getTitle();
@@ -32,9 +36,8 @@ public class Board extends Timestamp {
         this.user = user;
     }
 
-    public void update(BoardRequestDto requestDto, User user) {
+    public void update(BoardRequestDto requestDto,User user) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-        this.user = user;
     }
 }

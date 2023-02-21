@@ -1,6 +1,7 @@
 package com.example.homework2.Board.dto;
 
 import com.example.homework2.Board.entity.Board;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,6 +19,7 @@ public class BoardResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
+    @Builder
     public BoardResponseDto(Board entity){
         this.id = entity.getId();
         this.title = entity.getTitle();
@@ -28,4 +30,9 @@ public class BoardResponseDto {
         this.modifiedAt = entity.getModifiedAt();
     }
 
+    public static BoardResponseDto User_Response(Board entity){
+        return BoardResponseDto.builder()
+                .entity(entity)
+                .build();
+    }
 }

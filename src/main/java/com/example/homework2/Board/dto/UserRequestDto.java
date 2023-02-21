@@ -17,7 +17,7 @@ public class UserRequestDto {
     @Pattern(regexp = "^[a-zA-Z0-9]{7,14}$",message = "비밀번호는 8~15자리 영문 대소문자,숫자를 포함시켜주세요")
     private String password;
 
-    private boolean admin = false;
+    private Boolean admin;
 
     private String adminToken = "";
 
