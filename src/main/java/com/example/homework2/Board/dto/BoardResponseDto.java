@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -18,6 +19,7 @@ public class BoardResponseDto {
     private String password;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private List<CommentResponseDto> commentList;
 
     @Builder
     public BoardResponseDto(Board entity){
@@ -28,6 +30,7 @@ public class BoardResponseDto {
         this.password = entity.getUser().getPassword();
         this.createdAt = entity.getCreatedAt();
         this.modifiedAt = entity.getModifiedAt();
+        this.commentList = entity.getCommentlist().stream().map(CommentResponseDto::comment_Service).toList();
     }
 
     public static BoardResponseDto User_Response(Board entity){

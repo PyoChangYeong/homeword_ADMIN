@@ -5,9 +5,10 @@ import com.example.homework2.Board.dto.BoardRequestDto;
 import com.example.homework2.Board.dto.BoardResponseDto;
 import com.example.homework2.Board.dto.MegResponseDto;
 import com.example.homework2.Board.entity.Board;
+import com.example.homework2.Board.entity.Comment;
 import com.example.homework2.Board.entity.ErrorCode.ErrorCode;
-import com.example.homework2.Board.entity.User;
 import com.example.homework2.Board.entity.ErrorCode.UserRoleEnum;
+import com.example.homework2.Board.entity.User;
 import com.example.homework2.Board.exception.ApiException;
 import com.example.homework2.Board.jwt.JwtUtil;
 import com.example.homework2.Board.repository.BoardRepository;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,9 +33,6 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
-    
-    
-    
 
 
     //          게시글 전체 목록 조회
@@ -42,16 +41,18 @@ public class BoardService {
         List<Board> boards = getBoardRepository().findAllByOrderByModifiedAtDesc();
         List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
         for (Board bo : boards) {
+//            댓글리스트 작성일자 기준 내림차순 정렬
+            bo.getCommentlist()
+                    .sort(Comparator.comparing(Comment::getModifiedAt)
+                            .reversed());
 
-//            List<boardResponseDto> 로 만들기 위해 board를 BoardResponseDto로 만들고, list 에 dto 를 하나씩 넣는다.
-            boardResponseDtos.add(new BoardResponseDto(bo));
+            // List<BoardResponseDto> 로 만들기 위해 board 를 BoardResponseDto 로 만들고, list 에 dto 를 하나씩 넣는다.
+            boardResponseDtos.add(BoardResponseDto.User_Response(bo));
+
+//             id값 1로 다시 변경 해보기
         }
         return ResponseEntity.ok(boardResponseDtos);
-
-
     }
-
-
 
     //            게시글 작성
     @Transactional
@@ -63,8 +64,6 @@ public class BoardService {
 //          요청 받은 DTO 로 DB에 저장할 객체 만듬
         boardRepository.save(board);
         return ResponseEntity.ok().body(BoardResponseDto.builder().entity(board).build());
-
-
 
 //        작성 글 저장
 //        Board board = boardRepository.save(Board.User_Service(requestDto, user));
@@ -87,8 +86,6 @@ public class BoardService {
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
     }
-
-
 
     @Transactional
     public ResponseEntity<BoardResponseDto> updatePost(Long id, User user, BoardRequestDto boardRequestDto) {
@@ -128,12 +125,10 @@ public class BoardService {
                 throw new ApiException(ErrorCode.NOT_WRITER);
             }
 
-
 //            게시글 id와 사용자 정보 일치한다면, 게시글 수정
            boardRepository.deleteById(id);
             return ResponseEntity.ok(MegResponseDto.User_ServiceCode(HttpStatus.OK,"게시글 작성 완료"));
 
         }
-
 
 }

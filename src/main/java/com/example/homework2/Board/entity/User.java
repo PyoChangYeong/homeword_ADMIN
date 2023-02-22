@@ -29,7 +29,8 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user")
-    List<Board> posts = new ArrayList<>();
+    private List<Board> posts = new ArrayList<>();
+//    정보의 은닉
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)

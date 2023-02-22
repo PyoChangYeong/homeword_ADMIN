@@ -1,6 +1,7 @@
 package com.example.homework2.Board.entity;
 
 import com.example.homework2.Board.dto.BoardRequestDto;
+import com.example.homework2.Board.dto.CommentRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,10 +28,13 @@ public class Board extends Timestamp {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<Comment> commentlist = new ArrayList<>();
+
 
 
     @Builder
-    public Board(BoardRequestDto boardRequestDto, User user) {
+    public Board(BoardRequestDto boardRequestDto, User user, CommentRequestDto commentRequestDto) {
         this.title = boardRequestDto.getTitle();
         this.content = boardRequestDto.getContent();
         this.user = user;

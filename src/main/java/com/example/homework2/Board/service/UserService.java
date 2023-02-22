@@ -34,11 +34,11 @@ public class UserService {
     String username = userRequestDto.getUsername();
     String password = passwordEncoder.encode(userRequestDto.getPassword());
 
-
 //        회원 중복 확인
     Optional<User> found = userRepository.findByUsername(username);
     if (found.isPresent()) {
-        throw new ApiException(ErrorCode.DUPLICATED_USERNAME);
+        throw new IllegalArgumentException("중복 회원");
+//        throw new ApiException(ErrorCode.DUPLICATED_USERNAME);
     }
 
 //    입력한 username, password, admin으로 user 객체 만들어 repository 저장
@@ -60,8 +60,6 @@ public class UserService {
         throw new ApiException(ErrorCode.NOT_MATCHING_INFO);
     }
 
-
-
 //    header에 들어갈 JWT 세팅
     HttpHeaders headers = new HttpHeaders();
     headers.set(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.get().getUsername(), user.get().getRole()));
@@ -70,6 +68,9 @@ public class UserService {
             .headers(headers)
             .body(MegResponseDto.User_ServiceCode(HttpStatus.OK,"로그인 성공"));
 
-}
+    }
 
 }
+
+//          DB가져오면서 user_id를 바꿔서 user_id값에다가 User pk값을 넣으려고해서 오류 나는 것 같음
+//          Long
